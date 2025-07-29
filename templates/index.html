@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Movement Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Stock Movement Predictor!</h1>
+    <p>Enter a stock ticker to predict its movement for tomorrow.</p>
+
+    <div class="form-group">
+      <label for="tickerInput">Enter stock ticker:</label>
+      <input type="text" id="tickerInput" placeholder="e.g. AAPL">
+      <button onclick="predict()">Predict</button>
+    </div>
+
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function predict() {
+      const ticker = document.getElementById("tickerInput").value.trim().toUpperCase();
+      const resultDiv = document.getElementById("result");
+
+      if (!ticker) {
+        resultDiv.textContent = "Please enter a ticker symbol.";
+        return;
+      }
+
+      fetch("/predict", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ ticker })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          resultDiv.textContent = "Error: " + data.error;
+        } else {
+          resultDiv.textContent = data.prediction === 1
+            ? `Prediction: The stock will go UP tomorrow. 📈`
+            : `Prediction: The stock will go DOWN tomorrow. 📉`;
+        }
+      })
+      .catch(error => {
+        resultDiv.textContent = "Error: " + error.message;
+      });
+    }
+  </script>
+</body>
+</html>
