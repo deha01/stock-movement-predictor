@@ -4,7 +4,7 @@ import yfinance as yf
 import pandas as pd
 import ta
 
-def prepare_features(ticker, period="90d"):
+def prepare_features(ticker, period="1000d"):
     df = yf.download(ticker, period=period, auto_adjust=True)
     df.columns = df.columns.get_level_values(0) if isinstance(df.columns, pd.MultiIndex) else df.columns
     if df.empty:

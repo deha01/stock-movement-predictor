@@ -14,6 +14,9 @@
       <label for="tickerInput">Enter stock ticker:</label>
       <input type="text" id="tickerInput" placeholder="e.g. AAPL">
       <button onclick="predict()">Predict</button>
+      <p style="text-align:center; margin-top: 20px; font-size: 0.8em">
+    Model Accuracy: {{ accuracy }}%
+</p>
     </div>
 
     <div id="result" class="result"></div>
@@ -42,12 +45,12 @@
           resultDiv.textContent = "Error: " + data.error;
         } else {
           resultDiv.textContent = data.prediction === 1
-            ? `Prediction: The stock will go UP tomorrow. 📈`
-            : `Prediction: The stock will go DOWN tomorrow. 📉`;
+            ? `Prediction: The stock will go UP tomorrow. 📈 (Confidence: ${data.confidence}%)`
+            : `Prediction: The stock will go DOWN tomorrow. 📉 (Confidence: ${data.confidence}%)`;
         }
       })
       .catch(error => {
-        resultDiv.textContent = "Error: " + error.message;
+        resultDiv.textContent = "Error:" + error.message;
       });
     }
   </script>

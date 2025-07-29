@@ -25,4 +25,5 @@ model.fit(X_train, y_train)
 acc = accuracy_score(y_val, model.predict(X_val))
 print(f"Accuracy: {acc:.2f}")
 
-joblib.dump(model, "model.pkl")
+joblib.dump((model, acc), "model.pkl")
+

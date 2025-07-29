@@ -3,7 +3,7 @@ import joblib
 from features import prepare_features
 
 app = Flask(__name__)
-model = joblib.load("model.pkl")
+model, model_accuracy = joblib.load("model.pkl")
 
 features = [
     "Prev Close", "5-day MA", "10-day MA", "Volume", "Return", "5-day Std",
@@ -12,7 +12,7 @@ features = [
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", accuracy=round(model_accuracy * 100, 2))
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -29,9 +29,15 @@ def predict():
             return jsonify({"error": "Not enough data for prediction."})
 
         latest = df.iloc[-1:][features]
+        proba = model.predict_proba(latest)[0]
         prediction = model.predict(latest)[0]
+        confidence = round(max(proba) * 100, 2) # Confidence in percentage
 
-        return jsonify({"prediction": int(prediction)})
+        return jsonify({
+            "prediction": int(prediction),
+            "confidence": confidence
+        })
+
     except Exception as e:
         return jsonify({"error": str(e)})
 
